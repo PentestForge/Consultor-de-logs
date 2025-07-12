@@ -1,0 +1,34 @@
+{
+  "report_id": "muZCe1tVXTUMopDQ",
+  "report_type": "full_analysis",
+  "title": "Reporte de Ejemplo - Análisis de Seguridad",
+  "description": "Comprehensive security analysis covering 0 events over the period from 2025-07-12 08:39:30.985592 to 2025-07-12 09:39:30.985592",
+  "generated_at": "2025-07-12 09:39:30.986286",
+  "analysis_period": {
+    "start": "2025-07-12 08:39:30.985592",
+    "end": "2025-07-12 09:39:30.985592"
+  },
+  "overall_threat_level": "none",
+  "statistics": {
+    "total_events": 0,
+    "events_by_type": {},
+    "events_by_severity": {},
+    "time_range": {
+      "start": "2025-07-12 08:39:30.985592",
+      "end": "2025-07-12 09:39:30.985592"
+    },
+    "unique_users": 0,
+    "unique_computers": 0,
+    "failed_logons": 0
+  },
+  "anomalies": [],
+  "threat_indicators": [],
+  "recommendations": [],
+  "high_risk_events": [],
+  "compliance_status": {},
+  "metadata": {
+    "format": "html",
+    "include_charts": true,
+    "generator": "Consultor de Logs v1.0.0"
+  }
+}

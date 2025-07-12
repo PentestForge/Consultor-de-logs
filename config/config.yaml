@@ -1,0 +1,87 @@
+# Consultor de Logs - Windows Security Log Analyzer Configuration
+
+app_name: "Consultor de Logs"
+version: "1.0.0"
+debug: false
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}"
+  file_path: "./logs/consultor_logs.log"
+  rotation: "10 MB"
+  retention: "30 days"
+
+# Windows Log Access Configuration
+windows_logs:
+  default_computer: "localhost"
+  timeout: 30
+  max_events: 10000
+  log_sources:
+    - "Security"
+    - "System"
+    - "Application"
+
+# Analysis Configuration
+analysis:
+  # Failed logon detection
+  failed_logon_threshold: 5
+  failed_logon_window: 300  # 5 minutes in seconds
+  
+  # Off-hours detection
+  off_hours_start: 22  # 10 PM
+  off_hours_end: 6     # 6 AM
+  
+  # Privilege escalation events to monitor
+  privilege_escalation_events:
+    - 4672  # Special privileges assigned to new logon
+    - 4673  # A privileged service was called
+    - 4674  # An operation was attempted on a privileged object
+    - 4728  # A member was added to a security-enabled global group
+    - 4732  # A member was added to a security-enabled local group
+    - 4756  # A member was added to a security-enabled universal group
+  
+  # Suspicious process patterns
+  suspicious_process_patterns:
+    - "powershell.exe"
+    - "cmd.exe"
+    - "wmic.exe"
+    - "net.exe"
+    - "netsh.exe"
+    - "reg.exe"
+    - "rundll32.exe"
+    - "certutil.exe"
+    - "bitsadmin.exe"
+  
+  # Minimum confidence threshold for reporting anomalies
+  confidence_threshold: 0.7
+  
+  # Maximum events to process in a single analysis
+  max_events_per_analysis: 50000
+  
+  # Time bucket size for temporal analysis (in seconds)
+  time_bucket_size: 3600  # 1 hour
+
+# Report Generation Configuration
+reports:
+  default_format: "html"
+  output_directory: "./reports"
+  template_directory: "./templates"
+  include_charts: true
+  chart_width: 800
+  chart_height: 600
+  max_events_in_report: 1000
+
+# Database Configuration (optional)
+database:
+  enabled: false
+  connection_string: null
+  table_prefix: "consultor_"
+  retention_days: 90
+
+# Security Configuration
+security:
+  encrypt_reports: false
+  encryption_key_path: null
+  audit_config_changes: true
+  require_admin: true

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ report.title }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .summary-card { background: #fff; border: 1px solid #ddd; padding: 15px; border-radius: 5px; text-align: center; }
+        .summary-card h3 { margin: 0 0 10px 0; color: #333; }
+        .summary-card .number { font-size: 2em; font-weight: bold; color: #007bff; }
+        .threat-level { padding: 5px 10px; border-radius: 3px; color: white; font-weight: bold; }
+        .threat-level.none { background-color: #28a745; }
+        .threat-level.low { background-color: #ffc107; color: #212529; }
+        .threat-level.medium { background-color: #fd7e14; }
+        .threat-level.high { background-color: #dc3545; }
+        .threat-level.critical { background-color: #6f42c1; }
+        .section { margin-bottom: 30px; }
+        .section h2 { border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .anomaly { border: 1px solid #ddd; margin-bottom: 15px; padding: 15px; border-radius: 5px; }
+        .anomaly.critical { border-left: 5px solid #dc3545; }
+        .anomaly.high { border-left: 5px solid #fd7e14; }
+        .anomaly.medium { border-left: 5px solid #ffc107; }
+        .anomaly.low { border-left: 5px solid #28a745; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .table th { background-color: #f8f9fa; }
+        .recommendations { background-color: #f8f9fa; padding: 15px; border-radius: 5px; }
+        .chart { text-align: center; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ report.title }}</h1>
+        <p><strong>Generated:</strong> {{ report.generated_at | format_datetime }}</p>
+        <p><strong>Analysis Period:</strong> {{ report.analysis_period.start | format_datetime }} to {{ report.analysis_period.end | format_datetime }}</p>
+        <p><strong>Overall Threat Level:</strong> <span class="threat-level {{ report.overall_threat_level }}">{{ report.overall_threat_level.upper() }}</span></p>
+    </div>
+
+    <div class="summary">
+        <div class="summary-card">
+            <h3>Total Events</h3>
+            <div class="number">{{ report.statistics.total_events | format_number }}</div>
+        </div>
+        <div class="summary-card">
+            <h3>Anomalies Detected</h3>
+            <div class="number">{{ report.anomalies | length }}</div>
+        </div>
+        <div class="summary-card">
+            <h3>Unique Users</h3>
+            <div class="number">{{ report.statistics.unique_users }}</div>
+        </div>
+        <div class="summary-card">
+            <h3>Unique Computers</h3>
+            <div class="number">{{ report.statistics.unique_computers }}</div>
+        </div>
+    </div>
+
+    {% if charts %}
+    <div class="section">
+        <h2>Analysis Charts</h2>
+        {% for chart in charts %}
+        <div class="chart">
+            {{ chart | safe }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if report.anomalies %}
+    <div class="section">
+        <h2>Detected Anomalies</h2>
+        {% for anomaly in report.anomalies %}
+        <div class="anomaly {{ anomaly.severity }}">
+            <h3>{{ anomaly.anomaly_type.replace('_', ' ').title() }}</h3>
+            <p><strong>Severity:</strong> {{ anomaly.severity | format_severity | safe }}</p>
+            <p><strong>Confidence:</strong> {{ anomaly.confidence | format_confidence }}</p>
+            <p><strong>Description:</strong> {{ anomaly.description }}</p>
+            <p><strong>Detection Time:</strong> {{ anomaly.detection_time | format_datetime }}</p>
+            
+            {% if anomaly.recommendations %}
+            <div class="recommendations">
+                <h4>Recommendations:</h4>
+                <ul>
+                {% for rec in anomaly.recommendations %}
+                    <li>{{ rec }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <h4>Related Events ({{ anomaly.events | length }})</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Event ID</th>
+                        <th>User</th>
+                        <th>Computer</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for event in anomaly.events[:10] %}
+                    <tr>
+                        <td>{{ event.timestamp | format_datetime }}</td>
+                        <td>{{ event.event_id }}</td>
+                        <td>{{ event.username or 'N/A' }}</td>
+                        <td>{{ event.computer_name }}</td>
+                        <td>{{ event.description | truncate(100) }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if report.recommendations %}
+    <div class="section">
+        <h2>Security Recommendations</h2>
+        {% for rec in report.recommendations %}
+        <div class="recommendations">
+            <h3>{{ rec.title }}</h3>
+            <p><strong>Priority:</strong> {{ rec.priority | format_severity | safe }}</p>
+            <p><strong>Category:</strong> {{ rec.category }}</p>
+            <p>{{ rec.description }}</p>
+            {% if rec.implementation_steps %}
+            <h4>Implementation Steps:</h4>
+            <ol>
+            {% for step in rec.implementation_steps %}
+                <li>{{ step }}</li>
+            {% endfor %}
+            </ol>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="section">
+        <h2>Event Statistics</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Event Type</th>
+                    <th>Count</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for event_type, count in report.statistics.events_by_type.items() %}
+                <tr>
+                    <td>{{ event_type.replace('_', ' ').title() }}</td>
+                    <td>{{ count | format_number }}</td>
+                    <td>{{ ((count / report.statistics.total_events) * 100) | round(1) }}%</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666;">
+        <p>Report generated by Consultor de Logs - Windows Security Log Analyzer</p>
+        <p>Generated on {{ report.generated_at | format_datetime }}</p>
+    </footer>
+</body>
+</html>

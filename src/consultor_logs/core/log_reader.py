@@ -475,8 +475,13 @@ class MockWindowsLogReader(WindowsLogReader):
             if event_ids and mock_data['event_id'] not in event_ids:
                 continue
             
-            # Create mock timestamp
-            timestamp = datetime.now() - timedelta(minutes=count * 5)
+            # Create mock timestamp within the time range
+            if start_time and end_time:
+                # Generate timestamp within the specified range
+                time_diff = (end_time - start_time).total_seconds()
+                timestamp = start_time + timedelta(seconds=(time_diff * 0.5) - (count * 300))  # Spread events
+            else:
+                timestamp = datetime.now() - timedelta(minutes=count * 5)
             
             # Apply time filters
             if start_time and timestamp < start_time:

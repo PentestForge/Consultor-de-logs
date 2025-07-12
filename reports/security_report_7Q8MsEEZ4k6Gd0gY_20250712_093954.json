@@ -1,0 +1,76 @@
+{
+  "report_id": "7Q8MsEEZ4k6Gd0gY",
+  "report_type": "full_analysis",
+  "title": "Reporte de Ejemplo - Análisis de Seguridad",
+  "description": "Comprehensive security analysis covering 3 events over the period from 2025-07-12 08:39:54.697165 to 2025-07-12 09:39:54.697165",
+  "generated_at": "2025-07-12 09:39:54.711316",
+  "analysis_period": {
+    "start": "2025-07-12 08:39:54.697165",
+    "end": "2025-07-12 09:39:54.697165"
+  },
+  "overall_threat_level": "none",
+  "statistics": {
+    "total_events": 3,
+    "events_by_type": {
+      "logon": 1,
+      "failed_logon": 1,
+      "privilege_escalation": 1
+    },
+    "events_by_severity": {
+      "low": 1,
+      "medium": 1,
+      "high": 1,
+      "critical": 0
+    },
+    "time_range": {
+      "start": "2025-07-12 08:39:54.697165",
+      "end": "2025-07-12 09:39:54.697165"
+    },
+    "unique_users": 3,
+    "unique_computers": 1,
+    "failed_logons": 1
+  },
+  "anomalies": [],
+  "threat_indicators": [],
+  "recommendations": [],
+  "high_risk_events": [
+    {
+      "event_id": 4625,
+      "event_type": "failed_logon",
+      "timestamp": "2025-07-12 09:04:54.697165",
+      "source": "Mock-Security",
+      "computer_name": "localhost",
+      "username": "baduser",
+      "domain": null,
+      "process_name": null,
+      "process_id": null,
+      "ip_address": "10.0.0.50",
+      "description": "An account failed to log on.",
+      "raw_data": {
+        "mock": true
+      }
+    },
+    {
+      "event_id": 4672,
+      "event_type": "privilege_escalation",
+      "timestamp": "2025-07-12 08:59:54.697165",
+      "source": "Mock-Security",
+      "computer_name": "localhost",
+      "username": "admin",
+      "domain": null,
+      "process_name": null,
+      "process_id": null,
+      "ip_address": null,
+      "description": "Special privileges assigned to new logon.",
+      "raw_data": {
+        "mock": true
+      }
+    }
+  ],
+  "compliance_status": {},
+  "metadata": {
+    "format": "html",
+    "include_charts": true,
+    "generator": "Consultor de Logs v1.0.0"
+  }
+}
